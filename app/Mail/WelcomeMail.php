@@ -17,9 +17,11 @@ class WelcomeMail extends Mailable
      * Create a new message instance.
      */
     public $user;
-    public function __construct($user)
+    public $password;
+    public function __construct($user, $password)
     {
         $this->user = $user;
+        $this->password = $password;
     }
 
 

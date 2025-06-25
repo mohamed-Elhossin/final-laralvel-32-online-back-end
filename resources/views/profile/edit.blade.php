@@ -20,7 +20,13 @@
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                        @if (Auth::user()->image == null)
+                            <img width="50%"
+                                src="https://imgs.search.brave.com/gZ3W9GjnWyv8g9cDfw1qrVag80rOPbBgaMDkSRu3z40/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvcHJldmll/dy0xeC8wOC82MS9w/ZXJzb24tZ3JheS1w/aG90by1wbGFjZWhv/bGRlci1saXR0bGUt/Ym95LXZlY3Rvci0y/MzE5MDg2MS5qcGc"
+                                alt="">
+                        @else
+                            <img src="{{ asset('upload') . '/' . Auth::user()->image }}" alt="">
+                        @endif
                         <h2> {{ Auth::user()->name }} </h2>
                         <h3> {{ Auth::user()->email }}</h3>
                         <div class="social-links mt-2">
@@ -37,6 +43,11 @@
             <div class="col-xl-8">
 
                 <div class="card">
+                    @if (Session::has('success'))
+                        <div class="alert alert-success">
+                            {{ Session::get('success') }}
+                        </div>
+                    @endif
                     <div class="card-body pt-3">
                         <!-- Bordered Tabs -->
                         <ul class="nav nav-tabs nav-tabs-bordered">
@@ -52,8 +63,8 @@
                             </li>
 
                             <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#profile-settings">Settings</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Change
+                                    Image</button>
                             </li>
 
                             <li class="nav-item">
@@ -121,38 +132,11 @@
                             <div class="tab-pane fade pt-3" id="profile-settings">
 
                                 <!-- Settings Form -->
-                                <form>
-
-                                    <div class="row mb-3">
-                                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email
-                                            Notifications</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                                                <label class="form-check-label" for="changesMade">
-                                                    Changes made to your account
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                                                <label class="form-check-label" for="newProducts">
-                                                    Information on new products and services
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="proOffers">
-                                                <label class="form-check-label" for="proOffers">
-                                                    Marketing and promo offers
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="securityNotify"
-                                                    checked disabled>
-                                                <label class="form-check-label" for="securityNotify">
-                                                    Security alerts
-                                                </label>
-                                            </div>
-                                        </div>
+                                <form method="post" action="{{ route('profile.change_image', Auth::user()->id) }}"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="form-group my-3">
+                                        <input type="file" name="image" class="form-control">
                                     </div>
 
                                     <div class="text-center">

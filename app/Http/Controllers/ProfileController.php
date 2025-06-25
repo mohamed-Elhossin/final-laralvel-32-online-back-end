@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,36 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function change_image(Request $request, $id)
+    {
+        $request->validate([
+            'image' => "required|file|mimes:png,jpg,jpeg,webp"
+        ]);
+
+        $user = User::find($id);
+        if ($user->image == null) {
+            $image_data = $request->file('image');
+            $image_name = time() . $image_data->getClientOriginalName();
+            $location = public_path('upload/');
+            $image_data->move($location, $image_name);
+        } else {
+            $old_image = $user->image;
+            $old_image_path = public_path('upload/') .  $old_image;
+            unlink($old_image_path);
+
+            $image_data = $request->file('image');
+            $image_name = time() . $image_data->getClientOriginalName();
+            $location = public_path('upload/');
+            $image_data->move($location, $image_name);
+        }
+
+
+        $user->update([
+            'image' => $image_name
+        ]);
+
+        return redirect()->back()->with("success", "Change Image Success");
+    }
     /**
      * Update the user's profile information.
      */
